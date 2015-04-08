@@ -1,12 +1,11 @@
 /* TWITTER PORTRAIT
-A processing sketch which dynamicaly paints a user's portrait based on twitter hash tags. 
-The number of new tweets about hair, eyes, and face drive the color density of specific features
+A processing sketch which dynamicaly paints a user's portrait based on twitter 
+The number of new tweets about hair, eyes, and face drive the color density of 
 
 Created for ARTS444 at University of Illinois, Urbana-Champaign
 
 Authored by Alyssa Reyes, 2014
 */
-
 
 import gab.opencv.*;
 import processing.video.*;
@@ -14,7 +13,7 @@ import java.awt.*;
 import com.temboo.core.*;
 import com.temboo.Library.Twitter.Search.*;
 
-// Temboo Data that needs to be populated based on individual account information. 
+// Temboo Data that needs to be populated based on individual account informati
 // See https://www.temboo.com/library/Library/Twitter/ for details
 Tweets twitterSearch;
 TweetsResultSet tweetsResults;
@@ -28,6 +27,8 @@ String APISecret = "";
 String lastID1 = "0";
 String lastID2 = "0";
 String lastID3 = "0";
+
+
 
 OpenCV opencv;
 Capture video;
@@ -45,7 +46,6 @@ PVector[] motionPixels;
 boolean colorsSet = false;
 boolean showPoints = false;
 
-// 
 int newX = 0;
 int newY = 0;
 int jumpX = 7;
@@ -58,13 +58,12 @@ int faceY;
 int faceW;
 int faceH;
 
-// global variables for painting
-color dark = color(#57504f);
-color med = color(#4faac0);
-color light = color(#f7fac5);
-color darkA = color(#3d4d75);
-color medA = color(#f2662f);
-color lightA =  color(#c8f0c2);
+color dark;
+color med;
+color light;
+color darkA;
+color medA;
+color lightA;
 
 int mode = 0;
 
@@ -76,42 +75,49 @@ int timer;
 
 void setup() {
   size(1120, 720);
-  background(200);
-  timer = millis();
-  
-  // initialize camera & opencv face detection
+  // TODO: uncomment below to enable twitter drawing
+  //  setupTwitterSearch();
+
   video = new Capture(this, 160, 120);
   opencv = new OpenCV(this, 160, 120);
   opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);
   video.start();
 
+  dark = color(#57504f);
+  med = color(#4faac0);
+  light = color(#f7fac5);
+
+  darkA = color(#3d4d75);
+  medA = color(#f2662f);
+  lightA = color(#c8f0c2);
+
   prevFrame = new color[video.width * video.height];
   for (int i=0; i<prevFrame.length; i++)
     prevFrame[i] = color(255, 0, 0);
+
+  background(200);
+  timer = millis();
 }
 
-void captureEvent(Capture c) {
-  c.read();
-}
 
 void draw() {
   drawPoints();
-  
-  // draw with twitter data
+
   if (colorsSet) {
-    thread("checkTimer");
+      // TODO: uncomment to draw with twitter data
+      //    thread("checkTimer");
     paintMotion();
   }
 
-  // uncomment to draw with mouse movement instead of twitter
-  /*
+  // draw with mouse movement instead of twitter
   if (colorsSet && isInFace(mouseX, mouseY)) {
     int count = (int)random(20, 200);
     int type = (int)random(0, 3);
     for (int i=0; i<count; i++)
       getTriangle(type, mouseX, mouseY);
   }
-  */
+
+//  saveFrame();
 }
 
 
@@ -123,7 +129,7 @@ boolean isInFace(int x, int y) {
     return false;
 }
 
-
+ 
 // checks if camera has finished initializing (i.e. image is not blacked out)
 boolean checkIfCameraInit() {
   int loc = int(int(random(video.width-1)) + int(random(video.height-1)) * video.width);
@@ -135,7 +141,7 @@ boolean checkIfCameraInit() {
 }
 
 
-//utility that draws captured camera image & value ranges captured
+// utility to that draws captured camera image & value ranges captured
 void drawPoints() {
   noStroke();
   if (colorsSet) {
@@ -248,8 +254,7 @@ float pointSlope(int x, int x1, int x2) {
   return slope*(x-x1) + 1;
 }
 
-
-// set painting opacity to be highest inside face area, and then gradually fade out
+// set painting opacity to be highest inside face area, and then gradually fade
 int getOpacity(int x, int y ) {
   int opacity;
 
@@ -350,6 +355,11 @@ void getTriangle(int type, int x, int y) {
 }
 
 
+
+void captureEvent(Capture c) {
+  c.read();
+}
+
 // http://www.learningprocessing.com/examples/chapter-16/example-16-13/
 PVector[] getMotionLocation() {
   ArrayList <PVector> motionPix = new ArrayList<PVector>();
@@ -414,8 +424,8 @@ void checkTimer() {
 
 
 
-// -------------------- [PULLING DATA FROM TWITTER] -------------------
-// based off of code written by Ben Grosser
+// -------------------- [TWITTER STUFF] -------------------
+// based off code written by Ben Grosser
 
 void setupTwitterSearch() {
   twitterSearch = new Tweets(session);
