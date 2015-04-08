@@ -19,6 +19,7 @@
         String APIkey = "";  
         String APISecret = "";  
 4. Uncomment lines 79 and 108 in TwitterPortrait.pde (shown below)  
+
          79: setupTwitterSearch();  
         ...
         108: thread("checkTimer");
